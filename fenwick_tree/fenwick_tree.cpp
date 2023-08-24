@@ -1,20 +1,54 @@
-﻿// fenwick_tree.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+﻿#include <iostream>
+#include <vector>
 
-#include <iostream>
+using namespace std;
+
+vector<int> f;
+
+int get(int i) {
+	int res = 0;
+	while (i >= 0) {
+		res += f[i];
+		i = (i & (i + 1)) - 1;
+	}
+	return res;
+}
+
+void inc(int i, int x) {
+	while (i < f.size()) {
+		f[i] += x;
+		i |= i + 1;
+	}
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	int n;
+	cin >> n;
+
+	vector<int> v(n);
+	for (int& e : v)
+		cin >> e;
+
+	f.resize(n);
+	f[0] = v[0];
+	for (int i = 1; i < n; ++i)
+		f[i] = f[i - 1] + v[i];
+	for (int i = n - 1; i > 0; --i)
+		if ((i & (i + 1)) != 0)
+			f[i] -= f[(i & (i + 1)) - 1];
+
+	char p;
+	int i, x;
+	while (1) {
+		cin >> p;
+		if (p == 'i') {
+			cin >> i >> x;
+			inc(i, x);
+		}
+		if (p == 's') {
+			cin >> i;
+			cout << get(i) << endl;
+		}
+	}
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
